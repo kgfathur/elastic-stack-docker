@@ -23,6 +23,27 @@ volumes:
       device: /data/es03
       o: bind
 
+  es01_log:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/log_es01
+      o: bind
+
+  es02_log:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/log_es02
+      o: bind
+
+  es03_log:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/log_es03
+      o: bind
+
 networks:
   elk-net:
     driver: bridge
@@ -44,6 +65,7 @@ services:
         hard: -1
     volumes:
       - es01_data:/usr/share/elasticsearch/data
+      - es01_log:/usr/share/elasticsearch/logs
     ports:
       - 9200:9200
     networks:
@@ -65,6 +87,7 @@ services:
         hard: -1
     volumes:
       - es02_data:/usr/share/elasticsearch/data
+      - es02_log:/usr/share/elasticsearch/logs
     networks:
       - elk-net
     ports:
@@ -86,6 +109,7 @@ services:
         hard: -1
     volumes:
       - es03_data:/usr/share/elasticsearch/data
+      - es03_log:/usr/share/elasticsearch/logs
     networks:
       - elk-net
     ports:
