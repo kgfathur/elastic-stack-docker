@@ -67,6 +67,8 @@ services:
       - es02_data:/usr/share/elasticsearch/data
     networks:
       - elk-net
+    ports:
+      - 9201:9200
 
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
@@ -86,3 +88,5 @@ services:
       - es03_data:/usr/share/elasticsearch/data
     networks:
       - elk-net
+    ports:
+      - 9202:9200
