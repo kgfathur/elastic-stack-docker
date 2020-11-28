@@ -9,18 +9,18 @@ volumes:
       device: /data/es01
       o: bind
 
-  es01_data:
+  es02_data:
     driver: local
     driver_opts:
       type: none
-      device: /data/es01
+      device: /data/es02
       o: bind
 
-  es01_data:
+  es03_data:
     driver: local
     driver_opts:
       type: none
-      device: /data/es01
+      device: /data/es03
       o: bind
 
 networks:
@@ -64,7 +64,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - es01_data:/usr/share/elasticsearch/data
+      - es02_data:/usr/share/elasticsearch/data
     networks:
       - elk-net
 
@@ -83,6 +83,6 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - es01_data:/usr/share/elasticsearch/data
+      - es03_data:/usr/share/elasticsearch/data
     networks:
       - elk-net
