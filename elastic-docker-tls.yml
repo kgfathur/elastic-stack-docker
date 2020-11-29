@@ -106,7 +106,7 @@ services:
     container_name: kib01
     depends_on: {"es01": {"condition": "service_healthy"}}
     ports:
-      - 5601:5601    
+      - 5601:5601
     environment:
       SERVERNAME: localhost
       ELASTICSEARCH_URL: https://es01:9200
