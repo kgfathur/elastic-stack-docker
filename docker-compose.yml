@@ -1,27 +1,6 @@
 version: '3.8'
 
 volumes:
-  es01_conf:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es01_conf
-      o: bind
-
-  es02_conf:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es02_conf
-      o: bind
-
-  es03_conf:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es03_conf
-      o: bind
-
   es01_data:
     driver: local
     driver_opts:
@@ -64,8 +43,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
+    # volumes:
     #   # - es01_data:/usr/share/elasticsearch/data
     #   # - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   # - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
@@ -92,8 +70,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
+    # volumes:
     #   - es02_data:/usr/share/elasticsearch/data
     #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
@@ -119,8 +96,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
+    # volumes:
     #   - es03_data:/usr/share/elasticsearch/data
     #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
