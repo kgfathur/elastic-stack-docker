@@ -23,6 +23,10 @@ services:
 volumes:
   certs:
     driver: local
+    driver_opts:
+      type: none
+      device: /data/certs
+      o: bind
 
 networks:
   elastic:
