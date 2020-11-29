@@ -20,7 +20,7 @@ instances:
     ip:
       - 127.0.0.1
       
-  - name: 'kibana'
+  - name: 'kib01'
     dns: 
-      - kibana
+      - kib01
       - localhost
