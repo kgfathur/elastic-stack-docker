@@ -1,7 +1,6 @@
 version: '3.8'
 
 volumes:
-
   es01_data:
     driver: local
     driver_opts:
