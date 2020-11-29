@@ -64,8 +64,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
+    # volumes:
+    #   - es03_conf:/usr/share/elasticsearch/config
     #   # - es01_data:/usr/share/elasticsearch/data
     #   # - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   # - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
@@ -92,9 +92,9 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
-    #   # - es02_data:/usr/share/elasticsearch/data
+    # volumes:
+    #   - es03_conf:/usr/share/elasticsearch/config
+    #   - es02_data:/usr/share/elasticsearch/data
     #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
     #   - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
@@ -119,8 +119,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es03_conf:/usr/share/elasticsearch/config
+    # volumes:
+    #   - es03_conf:/usr/share/elasticsearch/config
     #   - es03_data:/usr/share/elasticsearch/data
     #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
