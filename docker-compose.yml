@@ -59,8 +59,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-      - xpack.security.enabled=$ELASTIC_SECURITY
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+      - xpack.security.enabled=true
       # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
@@ -84,8 +85,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-      - xpack.security.enabled=$ELASTIC_SECURITY
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+      - xpack.security.enabled=true
       # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
@@ -109,8 +111,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-      - xpack.security.enabled=$ELASTIC_SECURITY
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+      - xpack.security.enabled=true
       # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
