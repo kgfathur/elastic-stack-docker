@@ -6,8 +6,8 @@ services:
     container_name: create_certs
     command: >
       bash -c '
-        echo "installing unzip..."
-        yum install -y -q -e 0 unzip;
+        # echo "installing unzip..."
+        # yum install -y -e 0 unzip;
         if [[ ! -f /certs/bundle.zip ]]; then
           bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
           unzip /certs/bundle.zip -d /certs;
