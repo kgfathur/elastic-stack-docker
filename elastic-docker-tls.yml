@@ -119,6 +119,7 @@ services:
       SERVER_SSL_CERTIFICATE: $CERTS_DIR/kib01/kib01.crt
     volumes: 
       - certs:$CERTS_DIR
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     networks:
       - elastic
 
