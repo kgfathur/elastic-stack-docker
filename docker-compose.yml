@@ -46,10 +46,10 @@ services:
         hard: -1
     volumes:
       - es01_data:/usr/share/elasticsearch/data
-      - type: bind
-        source: ./elastic/elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
+      - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+      - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
+      
     ports:
       - 9200:9200
     networks:
@@ -73,10 +73,9 @@ services:
         hard: -1
     volumes:
       - es02_data:/usr/share/elasticsearch/data
-      - type: bind
-        source: ./elastic/elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
+      - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+      - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
     networks:
       - elk-net
     ports:
@@ -100,10 +99,9 @@ services:
         hard: -1
     volumes:
       - es03_data:/usr/share/elasticsearch/data
-      - type: bind
-        source: ./elastic/elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
+      - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+      - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
     networks:
       - elk-net
     ports:
