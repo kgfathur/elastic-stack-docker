@@ -107,19 +107,19 @@ services:
     ports:
       - 9202:9200
 
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.10.0
-    volumes:
-      - type: bind
-        source: ./kibana/kibana.yml
-        target: /usr/share/kibana/config/kibana.yml
-        read_only: true
-    ports:
-      - "5601:5601"
-    networks:
-      - elk-net
-    depends_on:
-      - es01
-      - es02
-      - es03
+  # kibana:
+  #   container_name: kibana
+  #   image: docker.elastic.co/kibana/kibana:7.10.0
+  #   volumes:
+  #     - type: bind
+  #       source: ./kibana/kibana.yml
+  #       target: /usr/share/kibana/config/kibana.yml
+  #       read_only: true
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - elk-net
+  #   depends_on:
+  #     - es01
+  #     - es02
+  #     - es03
