@@ -67,7 +67,6 @@ services:
         hard: -1
     volumes:
       - es01_data:/usr/share/elasticsearch/data
-      - es01_log:/usr/share/elasticsearch/logs
       # - type: bind
       #   source: ./elastic/elasticsearch.yml
       #   target: /usr/share/elasticsearch/config/elasticsearch.yml
@@ -95,7 +94,6 @@ services:
         hard: -1
     volumes:
       - es02_data:/usr/share/elasticsearch/data
-      - es02_log:/usr/share/elasticsearch/logs
       # - type: bind
       #   source: ./elastic/elasticsearch.yml
       #   target: /usr/share/elasticsearch/config/elasticsearch.yml
@@ -123,7 +121,6 @@ services:
         hard: -1
     volumes:
       - es03_data:/usr/share/elasticsearch/data
-      - es03_log:/usr/share/elasticsearch/logs
       # - type: bind
       #   source: ./elastic/elasticsearch.yml
       #   target: /usr/share/elasticsearch/config/elasticsearch.yml
