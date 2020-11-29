@@ -59,8 +59,8 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      # - ELASTIC_USERNAME=elastic
-      # - ELASTIC_PASSWORD=Admin123
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
     ulimits:
       memlock:
         soft: -1
@@ -87,8 +87,8 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      # - ELASTIC_USERNAME=elastic
-      # - ELASTIC_PASSWORD=Admin123
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
     ulimits:
       memlock:
         soft: -1
@@ -115,8 +115,8 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      # - ELASTIC_USERNAME=elastic
-      # - ELASTIC_PASSWORD=Admin123
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
     ulimits:
       memlock:
         soft: -1
