@@ -62,7 +62,7 @@ services:
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
       - xpack.security.enabled=true
-      # - xpack.license.self_generated.type: "trial"
+      - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
@@ -88,7 +88,7 @@ services:
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
       - xpack.security.enabled=true
-      # - xpack.license.self_generated.type: "trial"
+      - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
@@ -114,7 +114,7 @@ services:
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
       - xpack.security.enabled=true
-      # - xpack.license.self_generated.type: "trial"
+      - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
