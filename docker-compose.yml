@@ -59,6 +59,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=$ELASTIC_SECURITY
+      # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
@@ -81,6 +84,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=$ELASTIC_SECURITY
+      # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
@@ -103,6 +109,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=$ELASTIC_SECURITY
+      # - xpack.license.self_generated.type: "trial"
     ulimits:
       memlock:
         soft: -1
@@ -116,6 +125,7 @@ services:
       - 9202:9200
 
   kibana:
+    container_name: kibana
     image: docker.elastic.co/kibana/kibana:7.10.0
     volumes:
       - type: bind
