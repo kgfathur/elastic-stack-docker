@@ -61,8 +61,6 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
-      - xpack.security.enabled=true
-      - xpack.license.self_generated.type=trial
     ulimits:
       memlock:
         soft: -1
@@ -70,6 +68,10 @@ services:
     volumes:
       - es01_data:/usr/share/elasticsearch/data
       - es01_log:/usr/share/elasticsearch/logs
+      - type: bind
+        source: ./elastic/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
     ports:
       - 9200:9200
     networks:
@@ -87,8 +89,6 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
-      - xpack.security.enabled=true
-      - xpack.license.self_generated.type=trial
     ulimits:
       memlock:
         soft: -1
@@ -96,6 +96,10 @@ services:
     volumes:
       - es02_data:/usr/share/elasticsearch/data
       - es02_log:/usr/share/elasticsearch/logs
+      - type: bind
+        source: ./elastic/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
     networks:
       - elk-net
     ports:
@@ -113,8 +117,6 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Admin123
-      - xpack.security.enabled=true
-      - xpack.license.self_generated.type=trial
     ulimits:
       memlock:
         soft: -1
@@ -122,6 +124,10 @@ services:
     volumes:
       - es03_data:/usr/share/elasticsearch/data
       - es03_log:/usr/share/elasticsearch/logs
+      - type: bind
+        source: ./elastic/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
     networks:
       - elk-net
     ports:
