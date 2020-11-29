@@ -121,7 +121,7 @@ services:
       - certs:$CERTS_DIR
     networks:
       - elastic
-      
+
 volumes:
   data01:
     driver: local
@@ -131,6 +131,10 @@ volumes:
     driver: local
   certs:
     driver: local
+    driver_opts:
+      type: none
+      device: /data/certs
+      o: bind
 
 networks: 
   elastic:
