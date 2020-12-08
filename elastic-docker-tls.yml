@@ -6,13 +6,13 @@ services:
     container_name: es01
     environment:
       - node.name=es01
-      - cluster.name=es-cluster      
+      - cluster.name=es-cluster
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"      
       - xpack.license.self_generated.type=basic # <1>
-      - xpack.security.enabled=true      
+      - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true # <2>
       - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
       - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
@@ -104,6 +104,7 @@ services:
       - certs:$CERTS_DIR
     networks:
       - elastic
+  
   kib01:
     image: docker.elastic.co/kibana/kibana:${VERSION}
     container_name: kib01
