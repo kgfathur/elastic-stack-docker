@@ -17,6 +17,12 @@ services:
     #     chown -R 1000:0 /certs
     #   '
     # working_dir: /usr/share/elasticsearch
+    command: >
+      bash -c '
+        yum install -y python38;
+        /bin/bash
+      '
+
     volumes:
       - certs:/certs
       - .:/usr/share/elasticsearch/config/certificates
