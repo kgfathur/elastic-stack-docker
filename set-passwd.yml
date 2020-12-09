@@ -13,6 +13,7 @@ services:
       - SETPASS_master_password=${SETPASS_master_password}
       - SETPASS_elastic=${SETPASS_elastic}
       - SETPASS_apm_system=${SETPASS_apm_system}
+      - SETPASS_kibana=${SETPASS_kibana}
       - SETPASS_kibana_system=${SETPASS_kibana_system}
       - SETPASS_logstash_system=${SETPASS_logstash_system}
       - SETPASS_beats_system=${SETPASS_beats_system}
