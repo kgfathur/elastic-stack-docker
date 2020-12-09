@@ -30,12 +30,13 @@ services:
       bash -c '
         yum install -y python38;
         pip3 install requests;
+        env;
         python3 app.py
       '
 
     volumes:
       - certs:/certs
-      - .:/usr/share/elasticsearch/config/certificates
+      - ./es-setup/app.py:/app.py
     networks:
       - elastic
 
