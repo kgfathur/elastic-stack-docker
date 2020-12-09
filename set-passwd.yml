@@ -30,6 +30,7 @@ services:
     working_dir: /
     command: >
       bash -c '
+        env;
         if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
           echo "SETPASS_RESET = True";
           echo "All password for reserved elasticsearch user will be reset by this service"
