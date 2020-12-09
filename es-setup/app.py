@@ -21,7 +21,7 @@ print("SETPASS_MASTER = {}".format(set_master))
 
 passwords = {}
 
-if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
+if (set_master == True or set_master == 'True' or set_master == 'true' or set_master == 'TRUE'):
     print('Set using master password')
     if (set_master_password != None):
         passwords['elastic'] = set_master_password
