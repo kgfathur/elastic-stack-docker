@@ -9,6 +9,8 @@ services:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - SETPASS_RESET=${SETPASS_RESET}
+      - SETPASS_MASTER=${SETPASS_MASTER}
+      - SETPASS_master_password=${SETPASS_master_password}
       - SETPASS_elastic=${SETPASS_elastic}
       - SETPASS_apm_system=${SETPASS_apm_system}
       - SETPASS_kibana_system=${SETPASS_kibana_system}
