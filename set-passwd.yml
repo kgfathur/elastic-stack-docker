@@ -22,7 +22,7 @@ services:
         if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
           echo "GET True";
           echo "All password for reserved elasticsearch user will be reset by this service";
-          apk add python3 && python3 app.py;
+          apk add python3 && apk add py3-requests && python3 app.py;
         else
           echo "GET False";
           echo "NO Password will be reset by this service";
