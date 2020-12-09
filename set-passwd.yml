@@ -21,6 +21,7 @@ services:
     working_dir: /
     command: >
       sh -c '
+        env;
         echo "SETPASS_RESET = $SETPASS_RESET";
         if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
           echo "GET True";
