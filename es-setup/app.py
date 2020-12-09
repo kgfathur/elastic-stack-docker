@@ -35,7 +35,8 @@ if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
         print('But, master password not set!')
         print('Operation aborted')
         sys.exit(0)
-else:    
+else:
+    print('Set using individual password')
     passwords['elastic'] = os.getenv('SETPASS_elastic')
     passwords['apm_system'] = os.getenv('SETPASS_apm_system')
     passwords['kibana'] = os.getenv('SETPASS_kibana')
