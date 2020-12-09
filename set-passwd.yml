@@ -15,32 +15,20 @@ services:
       - SETPASS_logstash_system=${SETPASS_logstash_system}
       - SETPASS_beats_system=${SETPASS_beats_system}
       - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
-    # command: >
-    #   bash -c '
-    #     # echo "installing unzip..."
-    #     # yum install -y -e 0 unzip;
-    #     if [[ ! -f /certs/bundle.zip ]]; then
-    #       bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
-    #       unzip /certs/bundle.zip -d /certs;
-    #     else
-    #       echo "/certs/bundle.zip already exist!"
-    #     fi;
-    #     chown -R 1000:0 /certs
-    #   '
     working_dir: /
     command: >
       bash -c '
         env;
         echo "SETPASS_RESET = $SETPASS_RESET";
         if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
-          echo "SETPASS_RESET = True";
+          echo "GET True";
           echo "All password for reserved elasticsearch user will be reset by this service";
           yum install -y python38;
           pip3 install requests;
           env;
           python3 app.py;
         else
-          echo "SETPASS_RESET = False";
+          echo "GET False";
           echo "NO Password will be reset by this service";
         fi
       '
