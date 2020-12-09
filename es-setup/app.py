@@ -7,7 +7,7 @@ from requests.auth import HTTPBasicAuth
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-es_url = os.getenv('ELASTICSEARCH_URL')
+es_url = os.getenv('ELASTIC_URL')
 es_username = os.getenv('ELASTIC_USERNAME')
 es_password = os.getenv('ELASTIC_PASSWORD')
 passwords = {}
