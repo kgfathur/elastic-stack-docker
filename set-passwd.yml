@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   create_certs:
-    # image: centos:centos8.3.2011
-    image: python:3.9.1-slim-buster
+    image: centos:centos8.3.2011
     container_name: set_passwd
     # command: >
     #   bash -c '
@@ -17,12 +16,13 @@ services:
     #     fi;
     #     chown -R 1000:0 /certs
     #   '
-    # working_dir: /usr/share/elasticsearch
-    # command: >
-    #   bash -c '
-    #     yum install -y python38;
-    #     /bin/bash
-    #   '
+    working_dir: /
+    command: >
+      bash -c '
+        yum install -y python38;
+        pip3 install requests;
+        python3 app.py
+      '
 
     volumes:
       - certs:/certs
