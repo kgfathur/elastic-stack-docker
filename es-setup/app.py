@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 import urllib3
 import json
@@ -20,6 +21,24 @@ passwords['beats_system'] = os.getenv('SETPASS_beats_system')
 passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
 
 set_passwd = os.getenv('SETPASS_RESET')
+set_master = os.getenv('SETPASS_MASTER')
+set_master_password = os.getenv('SETPASS_master_password')
+
+if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
+    print('Set using master password')
+    if (set_master_password != None):
+        passwords['elastic'] = set_master_password
+        passwords['apm_system'] = set_master_password
+        passwords['kibana'] = set_master_password
+        passwords['kibana_system'] = set_master_password
+        passwords['logstash_system'] = set_master_password
+        passwords['beats_system'] = set_master_password
+        passwords['remote_monitoring_user'] = set_master_password
+    else:
+        print('But, master password not set!')
+        print('Operation aborted')
+        sys.exit(0)
+
 print("SETPASS_RESET = {}".format(set_passwd))
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
@@ -53,27 +72,32 @@ if (set_passwd) != None:
         print(json.dumps(json_response, indent=2))
         user_count = 0
         for username in json_response.keys():
+            if username in passwords.keys():
+                headers = {'Content-type': 'application/json'}
+                endpoint = '/_security/user/{}/_password'.format(username)
+                url = '{}{}'.format(es_url, endpoint)
+                user_data = {}
 
-            headers = {'Content-type': 'application/json'}
-            endpoint = '/_security/user/{}/_password'.format(username)
-            url = '{}{}'.format(es_url, endpoint)
-            user_data = {}
-            user_data['password'] = passwords[username]
-            data_json = json.dumps(user_data)
-            try:
-                print('\nTrying user password change call {}'.format(url))
-                response = requests.post(url, headers = headers, data = data_json, auth = HTTPBasicAuth(es_username, es_password), verify=False)
-                responCode = response.status_code
-                print('Response ({}):\n{}'.format(responCode, json.dumps(json.loads(response.content), indent=2)))
-                if (responCode == 200):        
-                    print('Changed password for user [{}]'.format(username))
-                    if (username == es_username):
-                        es_password = passwords[username]
-            except Exception as e:
-                print('Exception: {}'.format(e))
+                user_data['password'] = passwords[username]
+                data_json = json.dumps(user_data)
+                try:
+                    print('\nTrying user password change call {}'.format(url))
+                    response = requests.post(url, headers = headers, data = data_json, auth = HTTPBasicAuth(es_username, es_password), verify=False)
+                    responCode = response.status_code
+                    print('Response ({}):\n{}'.format(responCode, json.dumps(json.loads(response.content), indent=2)))
+                    if (responCode == 200):        
+                        print('Changed password for user [{}]'.format(username))
+                        if (username == es_username):
+                            es_password = passwords[username]
+                except Exception as e:
+                    print('Exception: {}'.format(e))
+            else:
+                print('User [{}] not in list'.format(username))
                 
     elif (responCode == 401):
         json_response = json.loads(response.content)
         print(json.dumps(json_response, indent=2))
         if 'error' in json_response.keys():
             print(json_response['error']['reason'])
+else:
+    print('Operation aborted')
