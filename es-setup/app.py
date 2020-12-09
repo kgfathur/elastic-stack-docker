@@ -20,6 +20,7 @@ passwords['beats_system'] = os.getenv('SETPASS_beats_system')
 passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
 
 set_passwd = os.getenv('SETPASS_RESET')
+print("SETPASS_RESET = {}".format(set_passwd))
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
 
