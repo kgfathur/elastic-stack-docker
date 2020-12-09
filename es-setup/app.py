@@ -24,15 +24,19 @@ passwords = {}
 if (set_passwd == True or set_passwd == 'True' or set_passwd == 'true' or set_passwd == 'TRUE'):
     if (set_master == True or set_master == 'True' or set_master == 'true' or set_master == 'TRUE'):
         print('Set using master password')
-        print('master_password [{}] ({})'.format(set_master_password, len(set_master_password)))
         if (set_master_password != None and set_master_password != ''):
-            passwords['elastic'] = set_master_password
-            passwords['apm_system'] = set_master_password
-            passwords['kibana'] = set_master_password
-            passwords['kibana_system'] = set_master_password
-            passwords['logstash_system'] = set_master_password
-            passwords['beats_system'] = set_master_password
-            passwords['remote_monitoring_user'] = set_master_password
+            if (len(set_master_password) < 6):
+                print('Passwords must be at least [6] characters long')
+                print('Operation aborted')
+                sys.exit(0)
+            else:
+                passwords['elastic'] = set_master_password
+                passwords['apm_system'] = set_master_password
+                passwords['kibana'] = set_master_password
+                passwords['kibana_system'] = set_master_password
+                passwords['logstash_system'] = set_master_password
+                passwords['beats_system'] = set_master_password
+                passwords['remote_monitoring_user'] = set_master_password
         else:
             print('But, master password not set!')
             print('Operation aborted')
