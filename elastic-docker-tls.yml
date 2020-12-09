@@ -34,7 +34,6 @@ services:
       - 9200:9200
     networks:
       - elastic
-      
     healthcheck:
       test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
@@ -72,6 +71,11 @@ services:
       - certs:$CERTS_DIR
     networks:
       - elastic
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
       
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
@@ -104,11 +108,18 @@ services:
       - certs:$CERTS_DIR
     networks:
       - elastic
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
   
   kib01:
     image: docker.elastic.co/kibana/kibana:${VERSION}
     container_name: kib01
-    depends_on: {"es01": {"condition": "service_healthy"}}
+    # depends_on: {"es01": {"condition": "service_healthy"}}
+    depends_on: 
+      - set_passwd
     ports:
       - 5601:5601
     environment:
@@ -116,7 +127,7 @@ services:
       ELASTICSEARCH_URL: https://es01:9200
       ELASTICSEARCH_HOSTS: https://es01:9200
       ELASTICSEARCH_USERNAME: kibana_system
-      ELASTICSEARCH_PASSWORD: Admin123
+      ELASTICSEARCH_PASSWORD: ${SETPASS_kibana_system}
       ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: $CERTS_DIR/ca/ca.crt
       SERVER_SSL_ENABLED: "true"
       SERVER_SSL_KEY: $CERTS_DIR/kib01/kib01.key
@@ -124,6 +135,27 @@ services:
     volumes: 
       - certs:$CERTS_DIR
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elastic
+  
+  set_passwd:
+    image: kgfathur/elasticsearch-setup-passwords:v0.1.0
+    container_name: set_passwd
+    environment:
+      - ELASTIC_URL=${ELASTIC_URL}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - SETPASS_RESET=${SETPASS_RESET}
+      - SETPASS_MASTER=${SETPASS_MASTER}
+      - SETPASS_master_password=${SETPASS_master_password}
+      - SETPASS_elastic=${SETPASS_elastic}
+      - SETPASS_apm_system=${SETPASS_apm_system}
+      - SETPASS_kibana=${SETPASS_kibana}
+      - SETPASS_kibana_system=${SETPASS_kibana_system}
+      - SETPASS_logstash_system=${SETPASS_logstash_system}
+      - SETPASS_beats_system=${SETPASS_beats_system}
+      - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
+    depends_on: {"es01": {"condition": "service_healthy"}}
     networks:
       - elastic
 
