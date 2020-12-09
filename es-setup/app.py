@@ -1,3 +1,4 @@
+import os
 import requests
 import urllib3
 import json
@@ -6,17 +7,19 @@ from requests.auth import HTTPBasicAuth
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-es_url = "https://192.168.1.14:9200"
-es_username = 'elastic'
-es_password = 'Admin123'
+es_url = os.getenv('ELASTICSEARCH_URL')
+es_username = os.getenv('ELASTIC_USERNAME')
+es_password = os.getenv('ELASTIC_PASSWORD')
 passwords = {}
-passwords['elastic'] = 'Admin123'
-passwords['apm_system'] = 'Admin123'
-passwords['kibana'] = 'Admin123'
-passwords['kibana_system'] = 'Admin123'
-passwords['logstash_system'] = 'Admin123'
-passwords['beats_system'] = 'Admin123'
-passwords['remote_monitoring_user'] = 'Admin123'
+passwords['elastic'] = os.getenv('SETPASS_elastic')
+passwords['apm_system'] = os.getenv('SETPASS_apm_system')
+passwords['kibana'] = os.getenv('SETPASS_kibana')
+passwords['kibana_system'] = os.getenv('SETPASS_kibana_system')
+passwords['logstash_system'] = os.getenv('SETPASS_logstash_system')
+passwords['beats_system'] = os.getenv('SETPASS_beats_system')
+passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
+
+set_passwd = os.getenv('SETPASS_RESET')
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
 
