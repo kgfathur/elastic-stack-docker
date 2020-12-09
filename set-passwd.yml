@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   create_certs:
-    image: alpine:3.12.1
+    image: kgfathur/elasticsearch-setup-passwords:v0.1.0
     container_name: set_passwd
     environment:
       - ELASTIC_URL=${ELASTIC_URL}
@@ -18,24 +18,6 @@ services:
       - SETPASS_logstash_system=${SETPASS_logstash_system}
       - SETPASS_beats_system=${SETPASS_beats_system}
       - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
-    working_dir: /
-    command: >
-      sh -c '
-        env;
-        echo "SETPASS_RESET = $SETPASS_RESET";
-        if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
-          echo "GET True";
-          echo "All password for reserved elasticsearch user will be reset by this service";
-          apk add python3 && apk add py3-requests && python3 app.py;
-        else
-          echo "GET False";
-          echo "NO Password will be reset by this service";
-        fi
-      '
-
-    volumes:
-      - certs:/certs
-      - ./es-setup/app.py:/app.py
     networks:
       - elastic
 
