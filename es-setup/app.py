@@ -21,34 +21,33 @@ print("SETPASS_MASTER = {}".format(set_master))
 
 passwords = {}
 
-if (set_master == True or set_master == 'True' or set_master == 'true' or set_master == 'TRUE'):
-    print('Set using master password')
-    if (set_master_password != None or set_master_password == ''):
-        passwords['elastic'] = set_master_password
-        passwords['apm_system'] = set_master_password
-        passwords['kibana'] = set_master_password
-        passwords['kibana_system'] = set_master_password
-        passwords['logstash_system'] = set_master_password
-        passwords['beats_system'] = set_master_password
-        passwords['remote_monitoring_user'] = set_master_password
+if (set_passwd == True or set_passwd == 'True' or set_passwd == 'true' or set_passwd == 'TRUE'):
+    if (set_master == True or set_master == 'True' or set_master == 'true' or set_master == 'TRUE'):
+        print('Set using master password')
+        if (set_master_password != None or set_master_password == ''):
+            passwords['elastic'] = set_master_password
+            passwords['apm_system'] = set_master_password
+            passwords['kibana'] = set_master_password
+            passwords['kibana_system'] = set_master_password
+            passwords['logstash_system'] = set_master_password
+            passwords['beats_system'] = set_master_password
+            passwords['remote_monitoring_user'] = set_master_password
+        else:
+            print('But, master password not set!')
+            print('Operation aborted')
+            sys.exit(0)
     else:
-        print('But, master password not set!')
-        print('Operation aborted')
-        sys.exit(0)
-else:
-    print('Set using individual password')
-    passwords['elastic'] = os.getenv('SETPASS_elastic')
-    passwords['apm_system'] = os.getenv('SETPASS_apm_system')
-    passwords['kibana'] = os.getenv('SETPASS_kibana')
-    passwords['kibana_system'] = os.getenv('SETPASS_kibana_system')
-    passwords['logstash_system'] = os.getenv('SETPASS_logstash_system')
-    passwords['beats_system'] = os.getenv('SETPASS_beats_system')
-    passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
-
+        print('Set using individual password')
+        passwords['elastic'] = os.getenv('SETPASS_elastic')
+        passwords['apm_system'] = os.getenv('SETPASS_apm_system')
+        passwords['kibana'] = os.getenv('SETPASS_kibana')
+        passwords['kibana_system'] = os.getenv('SETPASS_kibana_system')
+        passwords['logstash_system'] = os.getenv('SETPASS_logstash_system')
+        passwords['beats_system'] = os.getenv('SETPASS_beats_system')
+        passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
 
-if (set_passwd) != None:
     responCode = 404
     max_retries = 3
     while (responCode == 404) and max_retries > 0:
