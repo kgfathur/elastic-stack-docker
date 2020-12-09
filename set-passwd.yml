@@ -31,16 +31,17 @@ services:
     command: >
       bash -c '
         env;
+        echo "SETPASS_RESET = $SETPASS_RESET";
         if [[ "$SETPASS_RESET" == "true" || "$SETPASS_RESET" == "True" || "$SETPASS_RESET" == "TRUE" || "$SETPASS_RESET" == "1" ]]; then
           echo "SETPASS_RESET = True";
-          echo "All password for reserved elasticsearch user will be reset by this service"
+          echo "All password for reserved elasticsearch user will be reset by this service";
           yum install -y python38;
           pip3 install requests;
           env;
-          python3 app.py
+          python3 app.py;
         else
           echo "SETPASS_RESET = False";
-          echo "NO Password will be reset by this service"
+          echo "NO Password will be reset by this service";
         fi
       '
 
