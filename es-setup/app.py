@@ -24,6 +24,9 @@ set_passwd = os.getenv('SETPASS_RESET')
 set_master = os.getenv('SETPASS_MASTER')
 set_master_password = os.getenv('SETPASS_master_password')
 
+print("SETPASS_RESET = {}".format(set_passwd))
+print("SETPASS_MASTER = {}".format(set_master))
+
 if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
     print('Set using master password')
     if (set_master_password != None):
@@ -39,7 +42,6 @@ if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
         print('Operation aborted')
         sys.exit(0)
 
-print("SETPASS_RESET = {}".format(set_passwd))
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
 
