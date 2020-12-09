@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   create_certs:
-    image: centos:centos8.3.2011
+    image: centos:8.2.2004
     container_name: set_passwd
     environment:
       - ELASTIC_URL=${ELASTIC_URL}
