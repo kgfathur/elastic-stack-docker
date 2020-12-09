@@ -11,14 +11,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 es_url = os.getenv('ELASTIC_URL')
 es_username = os.getenv('ELASTIC_USERNAME')
 es_password = os.getenv('ELASTIC_PASSWORD')
-passwords = {}
-passwords['elastic'] = os.getenv('SETPASS_elastic')
-passwords['apm_system'] = os.getenv('SETPASS_apm_system')
-passwords['kibana'] = os.getenv('SETPASS_kibana')
-passwords['kibana_system'] = os.getenv('SETPASS_kibana_system')
-passwords['logstash_system'] = os.getenv('SETPASS_logstash_system')
-passwords['beats_system'] = os.getenv('SETPASS_beats_system')
-passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
 
 set_passwd = os.getenv('SETPASS_RESET')
 set_master = os.getenv('SETPASS_MASTER')
@@ -26,6 +18,8 @@ set_master_password = os.getenv('SETPASS_master_password')
 
 print("SETPASS_RESET = {}".format(set_passwd))
 print("SETPASS_MASTER = {}".format(set_master))
+
+passwords = {}
 
 if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
     print('Set using master password')
@@ -41,6 +35,14 @@ if (set_master == True or set_master == 'true' or set_master == 'TRUE'):
         print('But, master password not set!')
         print('Operation aborted')
         sys.exit(0)
+else:    
+    passwords['elastic'] = os.getenv('SETPASS_elastic')
+    passwords['apm_system'] = os.getenv('SETPASS_apm_system')
+    passwords['kibana'] = os.getenv('SETPASS_kibana')
+    passwords['kibana_system'] = os.getenv('SETPASS_kibana_system')
+    passwords['logstash_system'] = os.getenv('SETPASS_logstash_system')
+    passwords['beats_system'] = os.getenv('SETPASS_beats_system')
+    passwords['remote_monitoring_user'] = os.getenv('SETPASS_remote_monitoring_user')
 
 
 # response = requests.get(url, auth = HTTPBasicAuth('elastic', 'Admin123'), verify='/home/thur/git/espy/ca.crt')
