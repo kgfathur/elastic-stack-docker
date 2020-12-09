@@ -23,7 +23,7 @@ passwords = {}
 
 if (set_master == True or set_master == 'True' or set_master == 'true' or set_master == 'TRUE'):
     print('Set using master password')
-    if (set_master_password != None):
+    if (set_master_password != None or set_master_password == ''):
         passwords['elastic'] = set_master_password
         passwords['apm_system'] = set_master_password
         passwords['kibana'] = set_master_password
