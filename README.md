@@ -1,4 +1,4 @@
-## Containerized Elastic Stack using Docker Swarm
+## Containerized Elastic Stack using Docker-Compose
 
 ### Configuration:
 * Elasticsearch : 3 Nodes
