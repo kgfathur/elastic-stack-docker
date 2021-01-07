@@ -1,0 +1,222 @@
+version: '3.8'
+
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"      
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes: 
+      - data01:/usr/share/elasticsearch/data
+      - certs:$CERTS_DIR
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      labels:
+        local.es.master-01: "Elasticsearch Master Node 01"
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role==worker"
+          - "node.hostname==docker1.domain.local"
+    
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate 
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+      - certs:$CERTS_DIR
+    ports:
+      - 9201:9200
+    networks:
+      - elastic
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      labels:
+        local.es.master-02: "Elasticsearch Master Node 02"
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role==worker"
+          - "node.hostname==docker2.domain.local"
+      
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=$CERTS_DIR/es03/es03.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es03/es03.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate 
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es03/es03.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es03/es03.key
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes: 
+      - data03:/usr/share/elasticsearch/data
+      - certs:$CERTS_DIR
+    ports:
+      - 9202:9200
+    networks:
+      - elastic
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      labels:
+        local.es.master-03: "Elasticsearch Master Node 03"
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role==worker"
+          - "node.hostname==docker3.domain.local"
+  
+  kib01:
+    image: docker.elastic.co/kibana/kibana:${VERSION}
+    container_name: kib01
+    # depends_on: {"es01": {"condition": "service_healthy"}}
+    depends_on: 
+      - set_passwd
+    ports:
+      - 5601:5601
+    environment:
+      SERVERNAME: localhost
+      # ELASTICSEARCH_URL: https://es01:9200
+      ELASTICSEARCH_HOSTS: '["https://es01:9200","https://es02:9200","https://es03:9200"]'
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${SETPASS_kibana_system}
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: $CERTS_DIR/ca/ca.crt
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_KEY: $CERTS_DIR/kib01/kib01.key
+      SERVER_SSL_CERTIFICATE: $CERTS_DIR/kib01/kib01.crt
+    volumes: 
+      - certs:$CERTS_DIR
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elastic
+  
+  set_passwd:
+    image: kgfathur/elasticsearch-setup-passwords:v0.1.0
+    container_name: set_passwd
+    environment:
+      - ELASTIC_URL=${ELASTIC_URL}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - SETPASS_RESET=${SETPASS_RESET}
+      - SETPASS_RETRIES=${SETPASS_RETRIES}
+      - SETPASS_MASTER=${SETPASS_MASTER}
+      - SETPASS_master_password=${SETPASS_master_password}
+      - SETPASS_elastic=${SETPASS_elastic}
+      - SETPASS_apm_system=${SETPASS_apm_system}
+      - SETPASS_kibana=${SETPASS_kibana}
+      - SETPASS_kibana_system=${SETPASS_kibana_system}
+      - SETPASS_logstash_system=${SETPASS_logstash_system}
+      - SETPASS_beats_system=${SETPASS_beats_system}
+      - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
+    depends_on: {"es01": {"condition": "service_healthy"}}
+    networks:
+      - elastic
+
+volumes:
+  data01:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es01
+      o: bind
+  data02:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es02
+      o: bind
+  data03:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es03
+      o: bind
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/certs
+      o: bind
+
+networks: 
+  elastic:
+    driver: bridge
