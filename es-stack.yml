@@ -188,7 +188,7 @@ services:
       - SETPASS_beats_system=${SETPASS_beats_system}
       - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
     depends_on: 
-      es01:
+      - es01:
         condition: service_healthy
     networks:
       - elastic
