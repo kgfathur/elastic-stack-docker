@@ -6,6 +6,7 @@ services:
     container_name: es02
     environment:
       - node.name=es02
+      - network.host=0.0.0.0
       - cluster.name=es-cluster
       - discovery.seed_hosts=192.168.1.71,192.168.1.78
       - cluster.initial_master_nodes=es01,es02,es03
