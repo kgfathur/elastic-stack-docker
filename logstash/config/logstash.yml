@@ -1,0 +1,10 @@
+node.name: "ls01"
+http.host: "0.0.0.0"
+# path.config: /etc/logstash/conf.d/*.conf
+
+## X-Pack security credentials
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: ${ELASTIC_HOST}
+xpack.monitoring.elasticsearch.username: ${ELASTIC_USERNAME}
+xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD}
+xpack.monitoring.elasticsearch.ssl.certificate_authority: /certs/ca/ca.crt

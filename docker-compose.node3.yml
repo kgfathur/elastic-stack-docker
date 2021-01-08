@@ -42,6 +42,21 @@ services:
       timeout: 10s
       retries: 5
 
+  ls01:
+    image: docker.elastic.co/logstash/logstash:${VERSION}
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - certs:/certs
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_HOST: '["https://192.168.1.71:9200","https://192.168.1.72:9200","https://192.168.1.78:9200"]'
+      LS_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "5044:5044"
+      - "9600:9600"
 volumes:
   data03:
     driver: local
