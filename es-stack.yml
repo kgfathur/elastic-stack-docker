@@ -192,6 +192,12 @@ services:
     #     condition: service_healthy
     networks:
       - elastic
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
 
 volumes:
   data01:
