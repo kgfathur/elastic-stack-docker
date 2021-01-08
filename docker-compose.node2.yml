@@ -31,7 +31,7 @@ services:
       - data02:/usr/share/elasticsearch/data
       - certs:$CERTS_DIR
     ports:
-      - 9201:9200
+      - 9200:9200
     networks:
       - elastic
     healthcheck:
