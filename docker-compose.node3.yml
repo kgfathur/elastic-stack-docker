@@ -5,11 +5,11 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
     container_name: es03
     environment:
-      - node.name=es03
+      - node.name=docker3.domain.local
       - network.host=0.0.0.0
       - cluster.name=es-cluster
       - discovery.seed_hosts=192.168.1.71,192.168.1.72
-      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.initial_master_nodes=docker1.domain.local,docker2.domain.local,docker3.domain.local
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.license.self_generated.type=basic
