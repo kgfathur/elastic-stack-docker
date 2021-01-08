@@ -2,8 +2,8 @@ instances:
   - name: es01
     dns:
       - es01
-      - docker1.domain.local
       - localhost
+      - docker1.domain.local
     ip:
       - 127.0.0.1
       - 192.168.1.71
@@ -11,8 +11,8 @@ instances:
   - name: es02
     dns:
       - es02
-      - docker2.domain.local
       - localhost
+      - docker2.domain.local
     ip:
       - 127.0.0.1
       - 192.168.1.72
@@ -21,9 +21,9 @@ instances:
     dns:
       - es03
       - localhost
+      - docker3.domain.local
     ip:
       - 127.0.0.1
-      - docker3.domain.local
       - 192.168.1.78
       
   - name: 'kib01'
