@@ -72,7 +72,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /data/certs
+      device: /data/new-certs
       o: bind
 
 networks: 
