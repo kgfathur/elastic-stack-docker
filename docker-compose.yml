@@ -227,4 +227,7 @@ volumes:
 
 networks: 
   elastic:
-    driver: bridge
+    # driver: bridge
+    driver: overlay
+    attachable: true
+    name: elastic
