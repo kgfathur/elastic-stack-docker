@@ -7,7 +7,7 @@ services:
     environment:
       - node.name=es02
       - cluster.name=es-cluster
-      - discovery.seed_hosts=es01,es03
+      - discovery.seed_hosts=192.168.1.71,192.168.1.78
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -41,11 +41,7 @@ services:
       retries: 5
  
 volumes:
-  data01:
-    driver: local
   data02:
-    driver: local
-  data03:
     driver: local
   certs:
     driver: local
