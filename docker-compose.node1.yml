@@ -5,7 +5,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
     container_name: es01
     environment:
-      - node.name=es01
+      - node.name=192.168.1.71
       - cluster.name=es-cluster
       - discovery.seed_hosts=192.168.1.72,192.168.1.78
       - cluster.initial_master_nodes=es01,es02,es03
