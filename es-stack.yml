@@ -201,23 +201,23 @@ services:
 
 volumes:
   data01:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es01
-      o: bind
+    # driver: local
+    # driver_opts:
+    #   type: none
+    #   device: /data/es01
+    #   o: bind
   data02:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es02
-      o: bind
+    # driver: local
+    # driver_opts:
+    #   type: none
+    #   device: /data/es02
+    #   o: bind
   data03:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/es03
-      o: bind
+    # driver: local
+    # driver_opts:
+    #   type: none
+    #   device: /data/es03
+    #   o: bind
   certs:
     driver: local
     driver_opts:
