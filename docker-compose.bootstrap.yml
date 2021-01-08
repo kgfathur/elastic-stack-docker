@@ -22,20 +22,6 @@ services:
     networks:
       - elastic
 
-volumes:
-  data01:
-    driver: local
-  data02:
-    driver: local
-  data03:
-    driver: local
-  certs:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/certs
-      o: bind
-
 networks: 
   elastic:
     driver: bridge
