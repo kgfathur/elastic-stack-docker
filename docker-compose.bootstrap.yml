@@ -20,8 +20,8 @@ services:
       - SETPASS_beats_system=${SETPASS_beats_system}
       - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
     networks:
-      - elastic
+      - bootstrap
 
 networks: 
-  elastic:
+  bootstrap:
     driver: bridge
