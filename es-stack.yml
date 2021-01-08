@@ -198,6 +198,8 @@ services:
         delay: 20s
         max_attempts: 3
         window: 120s
+    volumes: 
+      - certs:$CERTS_DIR
 
 volumes:
   data01:
