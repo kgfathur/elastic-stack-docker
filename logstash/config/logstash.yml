@@ -1,11 +1,11 @@
-node.name: "ls01"
+# node.name: "ls01"
 http.host: "0.0.0.0"
 # path.config: /etc/logstash/conf.d/*.conf
 
 ## X-Pack security credentials
 xpack.monitoring.enabled: true
 # xpack.monitoring.elasticsearch.hosts: ${ELASTIC_HOST}
-xpack.monitoring.elasticsearch.hosts: [ "https://192.168.1.71:9200", "https://192.168.1.72:9200", "https://192.168.1.78:9200" ]
+xpack.monitoring.elasticsearch.hosts: [ "https://192.168.1.246:9200", "https://192.168.1.247:9200", "https://192.168.1.248:9200" ]
 xpack.monitoring.elasticsearch.username: ${ELASTIC_USERNAME}
 xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD}
 xpack.monitoring.elasticsearch.ssl.certificate_authority: /certs/ca/ca.crt
