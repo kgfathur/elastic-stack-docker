@@ -15,4 +15,7 @@ sudo rm -vrf /data/sidecar{0..2}/.[^\.][a-zA-Z]*
 sudo rm -vrf /data/kibana/*
 sudo rm -vrf /data/kibana/.[^\.][a-zA-Z]*
 
+sudo rm -vrf /data/grafana/*
+sudo rm -vrf /data/grafana/.[^\.][a-zA-Z]*
+
 sudo ls -lRa /data
