@@ -46,7 +46,7 @@ services:
     image: docker.elastic.co/logstash/logstash:${VERSION}
     container_name: ls01
     volumes:
-      - ../logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ../logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ../logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
       - ../logstash/pipeline:/usr/share/logstash/pipeline:ro
       - log_data:/data/log/
