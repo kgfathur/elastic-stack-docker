@@ -71,6 +71,12 @@ services:
 volumes:
   data02:
     driver: local
+  log_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/log
+      o: bind
   certs:
     driver: local
     driver_opts:
