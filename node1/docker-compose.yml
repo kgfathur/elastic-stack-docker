@@ -46,9 +46,9 @@ services:
     image: docker.elastic.co/logstash/logstash:${VERSION}
     container_name: ls01
     volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ../logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ../logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ../logstash/pipeline:/usr/share/logstash/pipeline:ro
       - log_data:/data/log/
       - certs:/certs
     environment:
@@ -88,7 +88,7 @@ services:
       SERVER_SSL_CERTIFICATE: $CERTS_DIR/kib01/kib01.crt
     volumes: 
       - certs:$CERTS_DIR
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ../kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     networks:
       - elastic
   

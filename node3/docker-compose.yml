@@ -1,35 +1,35 @@
 version: '3.8'
 
 services:
-  es02:
+  es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
-    container_name: es02
+    container_name: es03
     environment:
-      - node.name=es02
-      - network.publish_host=192.168.1.247
+      - node.name=es03
+      - network.publish_host=192.168.1.248
       - cluster.name=es-cluster
-      - discovery.seed_hosts=192.168.1.246,192.168.1.248
+      - discovery.seed_hosts=192.168.1.246,192.168.1.247
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.license.self_generated.type=basic
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
+      - xpack.security.http.ssl.key=$CERTS_DIR/es03/es03.key
       - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es03/es03.crt
       - xpack.security.transport.ssl.enabled=true
       - xpack.security.transport.ssl.verification_mode=certificate 
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es03/es03.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es03/es03.key
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - data02:/usr/share/elasticsearch/data
+    volumes: 
+      - data03:/usr/share/elasticsearch/data
       - certs:$CERTS_DIR
     ports:
       - 9200:9200
@@ -42,17 +42,17 @@ services:
       timeout: 10s
       retries: 5
 
-  ls02:
+  ls03:
     image: docker.elastic.co/logstash/logstash:${VERSION}
-    container_name: ls02
+    container_name: ls03
     volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ../logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ../logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ../logstash/pipeline:/usr/share/logstash/pipeline:ro
       - log_data:/data/log/
       - certs:/certs
     environment:
-      - node.name=ls02
+      - node.name=ls03
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       # - ELASTIC_HOST="https://192.168.1.246:9200,https://192.168.1.247:9200,https://192.168.1.248:9200"
@@ -69,8 +69,14 @@ services:
       retries: 5
 
 volumes:
-  data02:
+  data03:
     driver: local
+  log_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/log
+      o: bind
   certs:
     driver: local
     driver_opts:
