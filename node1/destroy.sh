@@ -1,4 +1,3 @@
 #!/bin/bash
 
-source ../.env
-docker-compose -f docker-compose.yml down -v
+docker-compose -f docker-compose.yml --env-file ../.env down -v

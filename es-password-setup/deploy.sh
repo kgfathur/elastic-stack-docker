@@ -1,4 +1,3 @@
 #!/bin/bash
 
-source ../.env
-docker-compose -f docker-compose.yml run --rm set_passwd
+docker-compose -f docker-compose.yml --env-file ../.env run --rm set_passwd
