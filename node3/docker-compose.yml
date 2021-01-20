@@ -11,7 +11,7 @@ services:
       - discovery.seed_hosts=192.168.1.246,192.168.1.247
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
       - xpack.license.self_generated.type=basic
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
@@ -56,7 +56,7 @@ services:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       # - ELASTIC_HOST="https://192.168.1.246:9200,https://192.168.1.247:9200,https://192.168.1.248:9200"
-      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "LS_JAVA_OPTS=-Xms2048m -Xmx2048m"
     ports:
       - "5044:5044"
       - "9600:9600"
