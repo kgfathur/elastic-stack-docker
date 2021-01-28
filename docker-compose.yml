@@ -37,18 +37,12 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_USERNAME=elastic
-      - ELASTIC_PASSWORD=Admin123
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    # volumes:
-    #   # - es01_data:/usr/share/elasticsearch/data
-    #   # - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    #   # - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
-    #   # - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
-      
     ports:
       - 9200:9200
     networks:
@@ -70,11 +64,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-    # volumes:
-    #   - es02_data:/usr/share/elasticsearch/data
-    #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
-    #   - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
     networks:
       - elk-net
     ports:
@@ -96,29 +85,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    # volumes:
-    #   - es03_data:/usr/share/elasticsearch/data
-    #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
-    #   - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
     networks:
       - elk-net
     ports:
       - 9202:9200
-
-  # kibana:
-  #   container_name: kibana
-  #   image: docker.elastic.co/kibana/kibana:7.10.0
-  #   volumes:
-  #     - type: bind
-  #       source: ./kibana/kibana.yml
-  #       target: /usr/share/kibana/config/kibana.yml
-  #       read_only: true
-  #   ports:
-  #     - "5601:5601"
-  #   networks:
-  #     - elk-net
-  #   depends_on:
-  #     - es01
-  #     - es02
-  #     - es03
