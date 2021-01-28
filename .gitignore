@@ -1,3 +1,5 @@
 tmp/*
 .env
+stackenv
+.vscode
 logstash/*
