@@ -96,28 +96,28 @@ services:
     depends_on:
       - es01
 
-  set_passwd:
-    image: kgfathur/elasticsearch-setup-passwords:v0.1.0
-    container_name: set_passwd
-    environment:
-      - ELASTIC_URL=${ELASTIC_URL}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - SETPASS_RESET=${SETPASS_RESET}
-      - SETPASS_RETRIES=${SETPASS_RETRIES}
-      - SETPASS_MASTER=${SETPASS_MASTER}
-      - SETPASS_master_password=${SETPASS_master_password}
-      - SETPASS_elastic=${SETPASS_elastic}
-      - SETPASS_apm_system=${SETPASS_apm_system}
-      - SETPASS_kibana=${SETPASS_kibana}
-      - SETPASS_kibana_system=${SETPASS_kibana_system}
-      - SETPASS_logstash_system=${SETPASS_logstash_system}
-      - SETPASS_beats_system=${SETPASS_beats_system}
-      - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
-    networks:
-      - elastic
-    depends_on:
-      - es01
+  # set_passwd:
+  #   image: kgfathur/elasticsearch-setup-passwords:v0.1.0
+  #   container_name: set_passwd
+  #   environment:
+  #     - ELASTIC_URL=${ELASTIC_URL}
+  #     - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+  #     - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+  #     - SETPASS_RESET=${SETPASS_RESET}
+  #     - SETPASS_RETRIES=${SETPASS_RETRIES}
+  #     - SETPASS_MASTER=${SETPASS_MASTER}
+  #     - SETPASS_master_password=${SETPASS_master_password}
+  #     - SETPASS_elastic=${SETPASS_elastic}
+  #     - SETPASS_apm_system=${SETPASS_apm_system}
+  #     - SETPASS_kibana=${SETPASS_kibana}
+  #     - SETPASS_kibana_system=${SETPASS_kibana_system}
+  #     - SETPASS_logstash_system=${SETPASS_logstash_system}
+  #     - SETPASS_beats_system=${SETPASS_beats_system}
+  #     - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
+  #   networks:
+  #     - elastic
+  #   depends_on:
+  #     - es01
   
 volumes:
   data01:
