@@ -1,235 +1,318 @@
 version: '3.8'
 
 services:
-  es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
-    container_name: es01
-    environment:
-      - node.name=es01
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es02,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"      
-      - xpack.license.self_generated.type=basic # <1>
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true # <2>
-      - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
-      - xpack.security.transport.ssl.enabled=true # <3>
-      - xpack.security.transport.ssl.verification_mode=certificate # <4>
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes: 
-      - data01:/usr/share/elasticsearch/data
-      - certs:$CERTS_DIR
-    ports:
-      - 9200:9200
-    networks:
-      - elastic
+  coordination:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
       interval: 30s
-      timeout: 10s
-      retries: 5
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-coordination
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-coordination
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
     deploy:
-      labels:
-        local.es.master-01: "Elasticsearch Master Node 01"
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - "node.role==worker"
-          - "node.hostname==docker1.domain.local"
-    
-  es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
-    container_name: es02
-    environment:
-      - node.name=es02
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es01,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.license.self_generated.type=basic
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate 
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
+
+  master1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    healthcheck:
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-master1
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-master
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
     volumes:
-      - data02:/usr/share/elasticsearch/data
-      - certs:$CERTS_DIR
-    ports:
-      - 9201:9200
-    networks:
-      - elastic
+      - esmaster1:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  master2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
       interval: 30s
-      timeout: 10s
-      retries: 5
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-master2
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-master
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    volumes:
+      - esmaster2:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  master3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    healthcheck:
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-master3
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-master
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    volumes:
+      - esmaster3:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker3.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  data1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    healthcheck:
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-data1
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-data
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+  data2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    healthcheck:
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-data2
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-data
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+  data3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    healthcheck:
+      test: curl -fs http://localhost:9200/_cat/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    configs:
+      - source: es-data3
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+      - source: jvm-options-data
+        target: /usr/share/elasticsearch/config/jvm.options
+    networks:
+      - esnet
+    volumes:
+      - esdata3:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker3.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    environment:
+      - "ELASTICSEARCH_URL=http://data1:9200"
+    networks:
+      - esnet
+      - proxy
     deploy:
       labels:
-        local.es.master-02: "Elasticsearch Master Node 02"
+        - "traefik.port=5601"
+        - "traefik.docker.network=proxy"
+        - "traefik.frontend.rule=Host:kibana.domain.local"
       mode: replicated
       replicas: 1
-      placement:
-        constraints:
-          - "node.role==worker"
-          - "node.hostname==docker2.domain.local"
-      
-  es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
-    container_name: es03
-    environment:
-      - node.name=es03
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.license.self_generated.type=basic
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es03/es03.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es03/es03.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate 
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es03/es03.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es03/es03.key
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes: 
-      - data03:/usr/share/elasticsearch/data
-      - certs:$CERTS_DIR
-    ports:
-      - 9202:9200
-    networks:
-      - elastic
-    healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    deploy:
-      labels:
-        local.es.master-03: "Elasticsearch Master Node 03"
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - "node.role==worker"
-          - "node.hostname==docker3.domain.local"
-  
-  kib01:
-    image: docker.elastic.co/kibana/kibana:${VERSION}
-    container_name: kib01
-    # depends_on: {"es01": {"condition": "service_healthy"}}
-    depends_on: 
-      - set_passwd
-    ports:
-      - 5601:5601
-    environment:
-      SERVERNAME: localhost
-      # ELASTICSEARCH_URL: https://es01:9200
-      ELASTICSEARCH_HOSTS: '["https://es01:9200","https://es02:9200","https://es03:9200"]'
-      ELASTICSEARCH_USERNAME: kibana_system
-      ELASTICSEARCH_PASSWORD: ${SETPASS_kibana_system}
-      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: $CERTS_DIR/ca/ca.crt
-      SERVER_SSL_ENABLED: "true"
-      SERVER_SSL_KEY: $CERTS_DIR/kib01/kib01.key
-      SERVER_SSL_CERTIFICATE: $CERTS_DIR/kib01/kib01.crt
-    volumes: 
-      - certs:$CERTS_DIR
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    networks:
-      - elastic
-  
-  set_passwd:
-    image: kgfathur/elasticsearch-setup-passwords:v0.1.0
-    container_name: set_passwd
-    environment:
-      - ELASTIC_URL=${ELASTIC_URL}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - SETPASS_RESET=${SETPASS_RESET}
-      - SETPASS_RETRIES=${SETPASS_RETRIES}
-      - SETPASS_MASTER=${SETPASS_MASTER}
-      - SETPASS_master_password=${SETPASS_master_password}
-      - SETPASS_elastic=${SETPASS_elastic}
-      - SETPASS_apm_system=${SETPASS_apm_system}
-      - SETPASS_kibana=${SETPASS_kibana}
-      - SETPASS_kibana_system=${SETPASS_kibana_system}
-      - SETPASS_logstash_system=${SETPASS_logstash_system}
-      - SETPASS_beats_system=${SETPASS_beats_system}
-      - SETPASS_remote_monitoring_user=${SETPASS_remote_monitoring_user}
-    # depends_on: 
-    #   - es01:
-    #     condition: service_healthy
-    networks:
-      - elastic
-    deploy:
+      update_config:
+        failure_action: rollback
+        parallelism: 1
+        delay: 10s
       restart_policy:
         condition: on-failure
-        delay: 20s
+        delay: 10s
         max_attempts: 3
-        window: 120s
-    volumes: 
-      - certs:$CERTS_DIR
 
-volumes:
-  data01:
-    # driver: local
-    # driver_opts:
-    #   type: none
-    #   device: /data/es01
-    #   o: bind
-  data02:
-    # driver: local
-    # driver_opts:
-    #   type: none
-    #   device: /data/es02
-    #   o: bind
-  data03:
-    # driver: local
-    # driver_opts:
-    #   type: none
-    #   device: /data/es03
-    #   o: bind
-  certs:
-    driver: local
-    driver_opts:
-      type: none
-      device: /data/certs
-      o: bind
+  visualizer:
+    image: dockersamples/visualizer
+    ports:
+      - "8081:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
-networks: 
-  elastic:
-    # driver: bridge
+  traefik:
+    image: traefik:latest
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    networks:
+      - proxy
+    command:
+      - --api
+      - --docker
+      - --docker.swarmmode
+      - --docker.watch
+      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entrypoints=Name:https Address::443 TLS
+      - --defaultentrypoints=http,https
+      - --metrics
+      - --metrics.prometheus
+      - --acme
+      - --acme.email=admin@domain.local
+      - --acme.storage=/certificates/acme.json
+      - --acme.entryPoint=https
+      - --acme.httpChallenge.entryPoint=http
+      - --acme.onhostrule=true
+      - --acme.acmelogging=true
+      - --logLevel=INFO
+      - --accessLog
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.docker.network=proxy"
+        - "traefik.port=8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "traefik-certificates:/certificates"
+
+networks:
+  esnet:
     driver: overlay
     attachable: true
-    name: elastic
+    name: esnet
+  proxy:
+    driver: overlay
+    name: proxy
+
+volumes:
+  esmaster1:
+  esmaster2:
+  esmaster3:
+
+  esdata1:
+  esdata2:
+  esdata3:
+  traefik-certificates:
+
+configs:
+  es-coordination:
+    name: es-coordination
+    file: swarm/es-coordination.yml
+  es-master1:
+    name: es-master1
+    file: swarm/es-master1.yml
+  es-master2:
+    name: es-master2
+    file: swarm/es-master2.yml
+  es-master3:
+    name: es-master3
+    file: swarm/es-master3.yml
+
+  es-data1:
+    name: es-data1
+    file: swarm/es-data1.yml
+  es-data2:
+    name: es-data2
+    file: swarm/es-data2.yml
+  es-data3:
+    name: es-data3
+    file: swarm/es-data3.yml
+
+  jvm-options-coordination:
+    name: jvm-options-coordination
+    file: swarm/jvm.coordination.options
+  jvm-options-data:
+    name: jvm-options-data 
+    file: swarm/jvm.data.options
+  jvm-options-master:
+    name: jvm-options-master
+    file: swarm/jvm.master.options
