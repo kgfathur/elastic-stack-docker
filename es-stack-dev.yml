@@ -1,0 +1,111 @@
+version: '3.8'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=es01
+      - network.host=es01
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    # ports:
+    #   - 9200:9200
+    # ports:
+    #   - 9200:9200
+    networks:
+      - macvlanswarm
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=es02
+      - network.host=es02
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    # ports:
+    #   - 9200:9200
+    networks:
+      - macvlanswarm
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=es03
+      - network.host=es03
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    # ports:
+    #   - 9200:9200
+    networks:
+      - macvlanswarm
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker3.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+  kib01:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    # ports:
+    #   - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    networks:
+      - macvlanswarm
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker0.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+networks:
+  macvlanswarm:
+    external: true
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local

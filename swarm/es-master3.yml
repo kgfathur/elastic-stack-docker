@@ -6,7 +6,7 @@ discovery.zen.commit_timeout: 5s
 node.master: true
 node.data: false
 node.ingest: false
-node.name: es-master3
-cluster.name: "docker-swarm-cluster"
-network.host: 0.0.0.0
+node.name: master3
+cluster.name: "es-cluster"
+network.host: master3
 action.destructive_requires_name: true

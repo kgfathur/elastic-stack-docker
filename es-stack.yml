@@ -1,33 +1,33 @@
 version: '3.8'
 
 services:
-  coordination:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
-    healthcheck:
-      test: curl -fs http://localhost:9200/_cat/health || exit 1
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 45s
-    configs:
-      - source: es-coordination
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-      - source: jvm-options-coordination
-        target: /usr/share/elasticsearch/config/jvm.options
-    networks:
-      - esnet
-    ports:
-      - target: 9200
-        published: 9200
-        protocol: tcp
-        mode: host
-    deploy:
-      endpoint_mode: dnsrr
-      mode: "replicated"
-      replicas: 2
-      resources:
-        limits:
-          memory: 1G
+  # coordination:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+  #   healthcheck:
+  #     test: curl -fs http://localhost:9200/_cat/health || exit 1
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+  #     start_period: 45s
+  #   configs:
+  #     - source: es-coordination
+  #       target: /usr/share/elasticsearch/config/elasticsearch.yml
+  #     - source: jvm-options-coordination
+  #       target: /usr/share/elasticsearch/config/jvm.options
+  #   networks:
+  #     - esnet
+  #   ports:
+  #     - target: 9200
+  #       published: 9200
+  #       protocol: tcp
+  #       mode: host
+  #   deploy:
+  #     endpoint_mode: dnsrr
+  #     mode: "replicated"
+  #     replicas: 2
+  #     resources:
+  #       limits:
+  #         memory: 1G
 
   master1:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
@@ -189,28 +189,28 @@ services:
         limits:
           memory: 1G
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.0
-    environment:
-      - "ELASTICSEARCH_URL=http://data1:9200"
-    networks:
-      - esnet
-      - proxy
-    deploy:
-      labels:
-        - "traefik.port=5601"
-        - "traefik.docker.network=proxy"
-        - "traefik.frontend.rule=Host:kibana.domain.local"
-      mode: replicated
-      replicas: 1
-      update_config:
-        failure_action: rollback
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        max_attempts: 3
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.10.0
+  #   environment:
+  #     - "ELASTICSEARCH_URL=http://data1:9200"
+  #   networks:
+  #     - esnet
+  #     - proxy
+  #   deploy:
+  #     labels:
+  #       - "traefik.port=5601"
+  #       - "traefik.docker.network=proxy"
+  #       - "traefik.frontend.rule=Host:kibana.domain.local"
+  #     mode: replicated
+  #     replicas: 1
+  #     update_config:
+  #       failure_action: rollback
+  #       parallelism: 1
+  #       delay: 10s
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 10s
+  #       max_attempts: 3
 
   visualizer:
     image: dockersamples/visualizer
@@ -223,46 +223,46 @@ services:
       placement:
         constraints: [node.role == manager]
 
-  traefik:
-    image: traefik:latest
-    ports:
-      - "80:80"
-      - "8080:8080"
-      - "443:443"
-    networks:
-      - proxy
-    command:
-      - --api
-      - --docker
-      - --docker.swarmmode
-      - --docker.watch
-      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
-      - --entrypoints=Name:https Address::443 TLS
-      - --defaultentrypoints=http,https
-      - --metrics
-      - --metrics.prometheus
-      - --acme
-      - --acme.email=admin@domain.local
-      - --acme.storage=/certificates/acme.json
-      - --acme.entryPoint=https
-      - --acme.httpChallenge.entryPoint=http
-      - --acme.onhostrule=true
-      - --acme.acmelogging=true
-      - --logLevel=INFO
-      - --accessLog
-    deploy:
-      placement:
-        constraints: [ node.hostname == docker1.domain.local ]
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      labels:
-        - "traefik.docker.network=proxy"
-        - "traefik.port=8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "traefik-certificates:/certificates"
+  # traefik:
+  #   image: traefik:latest
+  #   ports:
+  #     - "80:80"
+  #     - "8080:8080"
+  #     - "443:443"
+  #   networks:
+  #     - proxy
+  #   command:
+  #     - --api
+  #     - --docker
+  #     - --docker.swarmmode
+  #     - --docker.watch
+  #     - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+  #     - --entrypoints=Name:https Address::443 TLS
+  #     - --defaultentrypoints=http,https
+  #     - --metrics
+  #     - --metrics.prometheus
+  #     - --acme
+  #     - --acme.email=admin@domain.local
+  #     - --acme.storage=/certificates/acme.json
+  #     - --acme.entryPoint=https
+  #     - --acme.httpChallenge.entryPoint=http
+  #     - --acme.onhostrule=true
+  #     - --acme.acmelogging=true
+  #     - --logLevel=INFO
+  #     - --accessLog
+  #   deploy:
+  #     placement:
+  #       constraints: [ node.hostname == docker1.domain.local ]
+  #     mode: replicated
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: on-failure
+  #     labels:
+  #       - "traefik.docker.network=proxy"
+  #       - "traefik.port=8080"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #     - "traefik-certificates:/certificates"
 
 networks:
   esnet:
