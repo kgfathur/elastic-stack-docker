@@ -1,12 +1,5 @@
 bootstrap.memory_lock: true
-discovery.zen.minimum_master_nodes: 2
-discovery.zen.ping.unicast.hosts: master1, master2, master3
 discovery.zen.ping_timeout: 5s
-discovery.zen.commit_timeout: 5s
-node.master: false
-node.data: false
-node.ingest: false
 node.name: coor
 cluster.name: "es-cluster"
-network.host: coor
 action.destructive_requires_name: true
