@@ -6,7 +6,7 @@ discovery.zen.commit_timeout: 5s
 node.master: false
 node.data: false
 node.ingest: false
-node.name: coordination
+node.name: coor
 cluster.name: "es-cluster"
-network.host: coordination
+network.host: coor
 action.destructive_requires_name: true

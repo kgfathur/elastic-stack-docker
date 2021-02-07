@@ -19,5 +19,5 @@
 # Xms represents the initial size of total heap space
 # Xmx represents the maximum size of total heap space
 
--Xms1024m
--Xmx1024m
+-Xms512m
+-Xmx512m
