@@ -1,0 +1,280 @@
+version: '3.8'
+services:
+  master1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=master1
+      - network.host=master1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.master.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-master1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-master1:/es
+    # ports:
+    #   - 9200:9200
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.201
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  master2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=master2
+      - network.host=master2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.master.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-master2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-master2:/es
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.225
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  master3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=master3
+      - network.host=master3
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.master.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-master3.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-master3:/es
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.233
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker3.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  data1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=data1
+      - network.host=data1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.data.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-data1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-data1:/es
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.233
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  data2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=data2
+      - network.host=data2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.data.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-data2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-data2:/es
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.233
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  data3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=data3
+      - network.host=data3
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+    volumes:
+      - ./swarm/jvm.data.options:/usr/share/elasticsearch/config/jvm.options
+      - ./swarm/es-data1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - es-data3:/es
+    # ports:
+    #   - 9200:9200
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.233
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker3.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+  metric1:
+    image: docker.elastic.co/beats/metricbeat:7.10.0
+    # user: root
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    networks:
+      - esnetwork
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker1.domain.local ]
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+  
+  metric2:
+    image: docker.elastic.co/beats/metricbeat:7.10.0
+    # user: root
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    networks:
+      - esnetwork
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker2.domain.local ]
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  kib01:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    ports:
+    - target: 5601
+      published: 5601
+      protocol: tcp
+      mode: host
+    # environment:
+      # ELASTICSEARCH_URL: http://master1:9200
+      # ELASTICSEARCH_HOSTS: http://master1:9200
+      # SERVER_NAME: kib01
+      # ELASTICSEARCH_URL: https://es01:9200
+      # ELASTICSEARCH_HOSTS: '["http://master1:9200","http://master2:9200","http://master3:9200"]'
+    volumes:
+      - ./kibana/kibana.swarm.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      esnetwork:
+        ipv4_address: 192.168.1.195
+    deploy:
+      placement:
+        constraints: [ node.hostname == docker0.domain.local ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+
+networks:
+  macvlanswarm:
+    external: true
+
+  esnetwork:
+    driver: overlay
+    attachable: true
+    name: esnetwork
+
+volumes:
+  es-master1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master1
+      o: bind
+  es-master2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master2
+      o: bind
+  es-master3:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master3
+      o: bind
+  es-data1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data1
+      o: bind
+  es-data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data2
+      o: bind
+  es-data3:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data3
+      o: bind

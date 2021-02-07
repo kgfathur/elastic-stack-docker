@@ -1,0 +1,55 @@
+## Default Kibana configuration from Kibana base image.
+## https://github.com/elastic/kibana/blob/master/src/dev/build/tasks/os_packages/docker_generator/templates/kibana_yml.template.ts
+
+## DOCS
+## https://www.elastic.co/guide/en/kibana/current/settings.html
+## https://www.elastic.co/guide/en/kibana/current/monitoring-settings-kb.html
+
+server.name: kib01
+server.host: 0.0.0.0
+# server.host: kib01
+# server.port: 5601
+# server.ssl.enabled: true
+# server.ssl.certificate: $CERTS_DIR/kib01/kib01.crt
+# server.ssl.key: $CERTS_DIR/kib01/kib01.key
+# server.ssl.certificateAuthorities:
+
+## Valid values are "required", "optional", and "none".
+## Using "required" will refuse to establish the connection unless a client presents a certificate,
+## using "optional" will allow a client to present a certificate if it has one,
+## and using "none" will prevent a client from presenting a certificate.
+# server.ssl.clientAuthentication:
+
+monitoring.enabled: true
+## default to 'elasticsearch.hosts'
+# monitoring.ui.enabled: true
+# monitoring.ui.elasticsearch.hosts:
+# monitoring.ui.elasticsearch.username: 
+# monitoring.ui.elasticsearch.password:
+
+## SELF monitoring
+monitoring.kibana.collection.enabled: false
+# monitoring.kibana.collection.enabled: true
+# monitoring.kibana.collection.interval: 10000
+
+xpack.monitoring.collection.enabled: true
+
+## Stack Monitoring exposes the Cgroup statistics that we collect
+## for you to make better decisions about your container performance,
+## rather than guessing based on the overall machine performance
+## If you are not running your applications in a container, then Cgroup statistics are not useful.
+monitoring.ui.container.elasticsearch.enabled: true
+# monitoring.ui.container.logstash.enabled
+
+elasticsearch.hosts: [ "http://master1:9200", "http://master2:9200", "http://master3:9200" ]
+## X-Pack security credentials
+# elasticsearch.username: elastic
+# elasticsearch.password: Admin123
+
+# elasticsearch.ssl.certificate:
+# elasticsearch.ssl.key:
+# elasticsearch.ssl.certificateAuthorities:
+# elasticsearch.ssl.keyPassphrase:
+
+## Send cluster analytics & statistics to Elastic
+xpack.xpack_main.telemetry.enabled: false

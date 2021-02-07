@@ -1,5 +1,11 @@
+xpack.monitoring.collection.enabled: true
+xpack.monitoring.elasticsearch.collection.enabled: false
 bootstrap.memory_lock: true
 discovery.zen.ping_timeout: 5s
 node.name: data3
+node.roles: [ data ]
 cluster.name: "es-cluster"
 action.destructive_requires_name: true
+path:
+  data: /es/data/
+  logs: /es/log/

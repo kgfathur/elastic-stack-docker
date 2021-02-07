@@ -1,0 +1,238 @@
+metricbeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    # Reload module configs as they change:
+    reload.enabled: false
+
+metricbeat.modules:
+#---------------------------- Elasticsearch Module ----------------------------
+- module: elasticsearch
+  xpack.enabled: true
+  period: 10s
+  hosts: ["http://master1:9200", "http://master2:9200", "http://master3:9200", "http://data1:9200", "http://data2:9200", "http://data3:9200"]
+  #password: "secret"
+  #ssl.enabled: true
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+  #ssl.key: "/etc/pki/client/cert.key"
+  #ssl.verification_mode: "full"
+  # metricsets:
+  #   - node
+  #   - node_stats
+    #- index
+    #- index_recovery
+    #- index_summary
+    #- shard
+    #- ml_job
+  # hosts: ["http://master1:9200", "http://master2:9200", "http://master3:9200", "http://data1:9200", "http://data2:9200", "http://data3:9200"]
+  #username: "elastic"
+  #password: "changeme"
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  #index_recovery.active_only: true
+  #xpack.enabled: false
+  #scope: node
+#-------------------------------- Kibana Module --------------------------------
+- module: kibana
+  metricsets:
+    - stats
+  period: 10s
+  hosts: ["kib01:5601"]
+#   basepath: ""
+#   enabled: true
+
+  # Set to true to send data collected by module to X-Pack
+  # Monitoring instead of metricbeat-* indices.
+  xpack.enabled: true
+
+processors:
+
+output.elasticsearch:
+  hosts: ["master1:9200", "master2:9200", "master3:9200"]
+  #hosts: ["${ELASTICSEARCH_HOSTS}"]
+  #api_key: "id:api_key"
+  #username: '${ELASTICSEARCH_USERNAME:}'
+  #password: '${ELASTICSEARCH_PASSWORD:}'
+  #Protocol - either `http` (default) or `https`.
+  #protocol: "https"
+  # Use SSL settings for HTTPS.
+  #ssl.enabled: true
+  
+  # Controls the verification of certificates. Valid values are:
+  # * full, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate.
+  # * strict, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate. If the Subject Alternative
+  # Name is empty, it returns an error.
+  # * certificate, which verifies that the provided certificate is signed by a
+  # trusted authority (CA), but does not perform any hostname verification.
+  #  * none, which performs no verification of the server's certificate. This
+  # mode disables many of the security benefits of SSL/TLS and should only be used
+  # after very careful consideration. It is primarily intended as a temporary
+  # diagnostic mechanism when attempting to resolve TLS errors; its use in
+  # production environments is strongly discouraged.
+  # The default value is full.
+  #ssl.verification_mode: full
+
+  # List of supported/valid TLS versions. By default all TLS versions from 1.1
+  # up to 1.3 are enabled.
+  #ssl.supported_protocols: [TLSv1.1, TLSv1.2, TLSv1.3]
+
+  # List of root certificates for HTTPS server verifications
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  # Certificate for SSL client authentication
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+
+  # Client certificate key
+  #ssl.key: "/etc/pki/client/cert.key"
+
+  # Optional passphrase for decrypting the certificate key.
+  #ssl.key_passphrase: ''
+  
+  # Optional index name. The default is "metricbeat" plus date
+  # and generates [metricbeat-]YYYY.MM.DD keys.
+  # In case you modify this pattern you must update setup.template.name and setup.template.pattern accordingly.
+  #index: "metricbeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+# =================================== Kibana ===================================
+
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  #host: "localhost:5601"
+
+  # Optional protocol and basic auth credentials.
+  #protocol: "https"
+  #username: "elastic"
+  #password: "changeme"
+
+  # Optional HTTP path
+  #path: ""
+
+  # Optional Kibana space ID.
+  #space.id: ""
+
+  # Custom HTTP headers to add to each request
+  #headers:
+  #  X-My-Header: Contents of the header
+
+  # Use SSL settings for HTTPS.
+  #ssl.enabled: true
+
+  # Controls the verification of certificates. Valid values are:
+  # * full, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate.
+  # * strict, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate. If the Subject Alternative
+  # Name is empty, it returns an error.
+  # * certificate, which verifies that the provided certificate is signed by a
+  # trusted authority (CA), but does not perform any hostname verification.
+  #  * none, which performs no verification of the server's certificate. This
+  # mode disables many of the security benefits of SSL/TLS and should only be used
+  # after very careful consideration. It is primarily intended as a temporary
+  # diagnostic mechanism when attempting to resolve TLS errors; its use in
+  # production environments is strongly discouraged.
+  # The default value is full.
+  #ssl.verification_mode: full
+
+  # List of supported/valid TLS versions. By default all TLS versions from 1.1
+  # up to 1.3 are enabled.
+  #ssl.supported_protocols: [TLSv1.1, TLSv1.2, TLSv1.3]
+
+  # List of root certificates for HTTPS server verifications
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  # Certificate for SSL client authentication
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+
+  # Client certificate key
+  #ssl.key: "/etc/pki/client/cert.key"
+
+  # Optional passphrase for decrypting the certificate key.
+  #ssl.key_passphrase: ''
+
+# ============================= X-Pack Monitoring ==============================
+# Metricbeat can export internal metrics to a central Elasticsearch monitoring
+# cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
+# reporting is disabled by default.
+
+# Set to true to enable the monitoring reporter.
+#monitoring.enabled: false
+
+# Sets the UUID of the Elasticsearch cluster under which monitoring data for this
+# Metricbeat instance will appear in the Stack Monitoring UI. If output.elasticsearch
+# is enabled, the UUID is derived from the Elasticsearch cluster referenced by output.elasticsearch.
+#monitoring.cluster_uuid:
+
+# Uncomment to send the metrics to Elasticsearch. Most settings from the
+# Elasticsearch output are accepted here as well.
+# Note that the settings should point to your Elasticsearch *monitoring* cluster.
+# Any setting that is not set is automatically inherited from the Elasticsearch
+# output configuration, so if you have the Elasticsearch output configured such
+# that it is pointing to your Elasticsearch monitoring cluster, you can simply
+# uncomment the following line.
+#monitoring.elasticsearch:
+
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  #hosts: ["localhost:9200"]
+
+  # Set gzip compression level.
+  #compression_level: 0
+
+  # Protocol - either `http` (default) or `https`.
+  #protocol: "https"
+
+  # Authentication credentials - either API key or username/password.
+  #api_key: "id:api_key"
+  #username: "beats_system"
+  #password: "changeme"
+  
+  # Use SSL settings for HTTPS.
+  #ssl.enabled: true
+
+  # Controls the verification of certificates. Valid values are:
+  # * full, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate.
+  # * strict, which verifies that the provided certificate is signed by a trusted
+  # authority (CA) and also verifies that the server's hostname (or IP address)
+  # matches the names identified within the certificate. If the Subject Alternative
+  # Name is empty, it returns an error.
+  # * certificate, which verifies that the provided certificate is signed by a
+  # trusted authority (CA), but does not perform any hostname verification.
+  #  * none, which performs no verification of the server's certificate. This
+  # mode disables many of the security benefits of SSL/TLS and should only be used
+  # after very careful consideration. It is primarily intended as a temporary
+  # diagnostic mechanism when attempting to resolve TLS errors; its use in
+  # production environments is strongly discouraged.
+  # The default value is full.
+  #ssl.verification_mode: full
+
+  # List of supported/valid TLS versions. By default all TLS versions from 1.1
+  # up to 1.3 are enabled.
+  #ssl.supported_protocols: [TLSv1.1, TLSv1.2, TLSv1.3]
+
+  # List of root certificates for HTTPS server verifications
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  # Certificate for SSL client authentication
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+
+  # Client certificate key
+  #ssl.key: "/etc/pki/client/cert.key"
+
+  # Optional passphrase for decrypting the certificate key.
+  #ssl.key_passphrase: ''

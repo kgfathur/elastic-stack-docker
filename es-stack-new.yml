@@ -13,7 +13,6 @@ services:
       - node.name=coor
       - network.host=coor
       - cluster.name=es-cluster
-      - node.roles=[ ]
       - bootstrap.memory_lock=true
     configs:
       - source: es-coor
@@ -49,7 +48,6 @@ services:
       - node.name=master1
       - network.host=master1
       - cluster.name=es-cluster
-      - node.roles=[ master ]
       - bootstrap.memory_lock=true
       - discovery.seed_hosts=master2,master3
       - cluster.initial_master_nodes=master1,master2,master3
@@ -84,7 +82,6 @@ services:
       - node.name=master2
       - network.host=master2
       - cluster.name=es-cluster
-      - node.roles=[ master ]
       - bootstrap.memory_lock=true
       - discovery.seed_hosts=master1,master3
       - cluster.initial_master_nodes=master1,master2,master3
@@ -119,7 +116,6 @@ services:
       - node.name=master3
       - network.host=master3
       - cluster.name=es-cluster
-      - node.roles=[ master ]
       - bootstrap.memory_lock=true
       - discovery.seed_hosts=master1,master2
       - cluster.initial_master_nodes=master1,master2,master3
@@ -154,7 +150,6 @@ services:
       - node.name=data1
       - network.host=data1
       - cluster.name=es-cluster
-      - node.roles=[ data ]
       - bootstrap.memory_lock=true
     configs:
       - source: es-data1
@@ -186,7 +181,6 @@ services:
       - node.name=data2
       - network.host=data2
       - cluster.name=es-cluster
-      - node.roles=[ data ]
       - bootstrap.memory_lock=true
     configs:
       - source: es-data2
@@ -218,7 +212,6 @@ services:
       - node.name=data3
       - network.host=data3
       - cluster.name=es-cluster
-      - node.roles=[ data ]
       - bootstrap.memory_lock=true
     configs:
       - source: es-data3
