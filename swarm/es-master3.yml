@@ -8,5 +8,4 @@ node.data: false
 node.ingest: false
 node.name: master3
 cluster.name: "es-cluster"
-network.host: master3
 action.destructive_requires_name: true
