@@ -4,6 +4,5 @@
 tmp/*
 stackenv
 data-*
-logstash
 pipeline/*
 !pipeline/sample.conf
