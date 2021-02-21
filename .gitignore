@@ -3,6 +3,7 @@
 .cd-warning
 tmp/*
 stackenv
-logstash/*
 data-*
-pipeline
+logstash
+pipeline/*
+!pipeline/sample.conf
