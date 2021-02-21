@@ -2,6 +2,5 @@
 tmp/*
 stackenv
 .vscode
-logstash/*
 pipeline/*
 !pipeline/sample.conf
