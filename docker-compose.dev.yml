@@ -1,0 +1,124 @@
+version: '3.8'
+
+volumes:
+  es01_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es01
+      o: bind
+
+  es02_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es02
+      o: bind
+
+  es03_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es03
+      o: bind
+
+networks:
+  elk-net:
+    driver: bridge
+
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # volumes:
+    #   # - es01_data:/usr/share/elasticsearch/data
+    #   # - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    #   # - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+    #   # - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
+      
+    ports:
+      - 9200:9200
+    networks:
+      - elk-net
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # volumes:
+    #   - es02_data:/usr/share/elasticsearch/data
+    #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+    #   - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
+    networks:
+      - elk-net
+    ports:
+      - 9201:9200
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Admin123
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # volumes:
+    #   - es03_data:/usr/share/elasticsearch/data
+    #   - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    #   - ./elastic/elastic-stack-ca.p12:/usr/share/elasticsearch/config/elastic-stack-ca.p12:ro
+    #   - ./elastic/es01-cert.p12:/usr/share/elasticsearch/config/es01-cert.p12:ro
+    networks:
+      - elk-net
+    ports:
+      - 9202:9200
+
+  # kibana:
+  #   container_name: kibana
+  #   image: docker.elastic.co/kibana/kibana:7.10.0
+  #   volumes:
+  #     - type: bind
+  #       source: ./kibana/kibana.yml
+  #       target: /usr/share/kibana/config/kibana.yml
+  #       read_only: true
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - elk-net
+  #   depends_on:
+  #     - es01
+  #     - es02
+  #     - es03
