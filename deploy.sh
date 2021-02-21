@@ -13,4 +13,4 @@ echo -e "MANAGER3 \t= $MANAGER3"
 echo -e "WORKER1 \t= $WORKER1"
 echo -e "WORKER2 \t= $WORKER2"
 echo ""
-docker stack deploy -c es-stack-dev3.yml ${1:-$STACK_NAME}
+docker stack deploy -c es-stack-dev.yml ${1:-$STACK_NAME}
