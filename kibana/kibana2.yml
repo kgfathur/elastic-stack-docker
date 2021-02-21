@@ -5,7 +5,7 @@
 ## https://www.elastic.co/guide/en/kibana/current/settings.html
 ## https://www.elastic.co/guide/en/kibana/current/monitoring-settings-kb.html
 
-server.name: kibana1
+server.name: kibana2
 server.host: 0.0.0.0
 # server.host: kib01
 # server.port: 5601

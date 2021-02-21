@@ -1,0 +1,549 @@
+version: '3.8'
+
+services:
+  debug1:
+    image: quay.io/kgfathur/rhubi:8.3
+    environment:
+      - ENV1=$CERTS_DIR
+      - ENV2=${CERTS_DIR}
+      - ENV3=$ENV_TEST
+      - ENV4=${ENV_TEST}
+    command: ['ping', '-i', '360', '127.0.0.1']
+    volumes:
+      - certs:/certs:ro
+    networks:
+      - es_net
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER1 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  debug2:
+    image: quay.io/kgfathur/rhubi:8.3
+    environment:
+      - ENV1=$CERTS_DIR
+      - ENV2=${CERTS_DIR}
+      - ENV3=$ENV_TEST
+      - ENV4=${ENV_TEST}
+    command: ['ping', '-i', '360', '127.0.0.1']
+    volumes:
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+
+  coor1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=coor1
+      - network.host=0.0.0.0
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-coor1/es-coor1-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-coor1/es-coor1-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-coor1/es-coor1-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-coor1/es-coor1-server.key
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.coor.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/coor1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - coor1:/es
+      - certs:$CERTS_DIR:ro
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER1 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  coor2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=coor2
+      - network.host=0.0.0.0
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-coor2/es-coor2-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-coor2/es-coor2-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-coor2/es-coor2-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-coor2/es-coor2-server.key
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.coor.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/coor2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - coor2:/es
+      - certs:$CERTS_DIR:ro
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  master1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=master1
+      - network.host=master1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-master1/es-master1-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-master1/es-master1-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-master1/es-master1-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-master1/es-master1-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.master.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/master1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - master1:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER1 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  master2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=master2
+      - network.host=master2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-master2/es-master2-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-master2/es-master2-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-master2/es-master2-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-master2/es-master2-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.master.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/master2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - master2:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  master3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=master3
+      - network.host=master3
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-master3/es-master3-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-master3/es-master3-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-master3/es-master3-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-master3/es-master3-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.master.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/master3.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - master3:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  data1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=data1
+      - network.host=data1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-data1/es-data1-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-data1/es-data1-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-data1/es-data1-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-data1/es-data1-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.data.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/data1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - data1:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER1 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  data2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=data2
+      - network.host=data2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-data2/es-data2-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-data2/es-data2-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-data2/es-data2-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-data2/es-data2-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.data.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/data2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - data2:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  data3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=data3
+      - network.host=data3
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=master1,master2,master3
+      - cluster.initial_master_nodes=master1,master2,master3
+      - xpack.license.self_generated.type=basic # <1>
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true # <2>
+      - xpack.security.http.ssl.key=$CERTS_DIR/es-data3/es-data3-server.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es-data3/es-data3-server.crt
+      - xpack.security.transport.ssl.enabled=true # <3>
+      - xpack.security.transport.ssl.verification_mode=certificate # <4>
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es-data3/es-data3-server.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es-data3/es-data3-server.key
+    volumes:
+      - /data/src/elastic-stack/elastic/jvm.data.options:/usr/share/elasticsearch/config.d/jvm.options
+      - /data/src/elastic-stack/elastic/data3.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - data3:/es
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER2 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  # metric1:
+  #   image: docker.elastic.co/beats/metricbeat:7.11.1
+  #   # user: root
+  #   volumes:
+  #     - /data/src/elastic-stack/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+  #     - /proc:/hostfs/proc:ro
+  #     - /:/hostfs:ro
+  #     - certs:$CERTS_DIR
+  #   networks:
+  #     - es_net
+  #   deploy:
+  #     placement:
+  #       constraints: [ node.hostname == $WORKER1 ]
+  #     mode: "replicated"
+  #     replicas: 1
+  #     resources:
+  #       limits:
+  #         memory: 4G
+  
+  # metric2:
+  #   image: docker.elastic.co/beats/metricbeat:7.11.1
+  #   # user: root
+  #   volumes:
+  #     - /data/src/elastic-stack/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+  #     - /proc:/hostfs/proc:ro
+  #     - /:/hostfs:ro
+  #     - certs:$CERTS_DIR
+  #   networks:
+  #     - es_net
+  #   deploy:
+  #     placement:
+  #       constraints: [ node.hostname == $WORKER2 ]
+  #     mode: "replicated"
+  #     replicas: 1
+  #     resources:
+  #       limits:
+  #         memory: 4G
+
+  kibana1:
+    image: docker.elastic.co/kibana/kibana:7.11.1
+    ports:
+    - target: 5601
+      published: 5601
+      protocol: tcp
+      mode: host
+    # environment:
+      # ELASTICSEARCH_URL: http://master1:9200
+      # ELASTICSEARCH_HOSTS: http://master1:9200
+      # SERVER_NAME: kib01
+      # ELASTICSEARCH_URL: https://es01:9200
+      # ELASTICSEARCH_HOSTS: '["http://master1:9200","http://master2:9200","http://master3:9200"]'
+    volumes:
+      - /data/src/elastic-stack/kibana/kibana1.yml:/usr/share/kibana/config/kibana.yml
+      - certs:$CERTS_DIR:ro
+    networks:
+      - es_net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      placement:
+        constraints: [ node.hostname == $WORKER1 ]
+      endpoint_mode: dnsrr
+      mode: "replicated"
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+
+  # kibana2:
+  #   image: docker.elastic.co/kibana/kibana:7.11.1
+  #   ports:
+  #   - target: 5601
+  #     published: 5601
+  #     protocol: tcp
+  #     mode: host
+  #   # environment:
+  #     # ELASTICSEARCH_URL: http://master1:9200
+  #     # ELASTICSEARCH_HOSTS: http://master1:9200
+  #     # SERVER_NAME: kib01
+  #     # ELASTICSEARCH_URL: https://es01:9200
+  #     # ELASTICSEARCH_HOSTS: '["http://master1:9200","http://master2:9200","http://master3:9200"]'
+  #   volumes:
+  #     - /data/src/elastic-stack/kibana/kibana2.yml:/usr/share/kibana/config/kibana.yml
+  #     - certs:$CERTS_DIR
+  #   networks:
+  #     - es_net
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   deploy:
+  #     placement:
+  #       constraints: [ node.hostname == $WORKER2 ]
+  #     endpoint_mode: dnsrr
+  #     mode: "replicated"
+  #     replicas: 1
+  #     resources:
+  #       limits:
+  #         memory: 4G
+
+networks:
+  macvnet:
+    external: true
+
+  es_net:
+    driver: overlay
+    attachable: true
+    name: es_net
+
+volumes:
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/certs
+      o: bind
+  coor1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-coor1
+      o: bind
+  coor2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-coor2
+      o: bind
+  master1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master1
+      o: bind
+  master2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master2
+      o: bind
+  master3:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-master3
+      o: bind
+  data1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data1
+      o: bind
+  data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data2
+      o: bind
+  data3:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/es-data3
+      o: bind

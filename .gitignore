@@ -1,5 +1,8 @@
 .env
+.vscode
+.cd-warning
 tmp/*
 stackenv
-.vscode
 logstash/*
+data-*
+pipeline

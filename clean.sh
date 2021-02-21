@@ -1,21 +1,24 @@
 #!/bin/bash
 
-sudo rm -vrf /data/es-master{1..3}/*
-sudo rm -vrf /data/es-master{1..3}/.[^\.][a-zA-Z]*
+rm -vrf /data/es-master{1..3}/*
+rm -vrf /data/es-master{1..3}/.[^\.][a-zA-Z]*
 
-sudo rm -vrf /data/es-data{1..3}/*
-sudo rm -vrf /data/es-data{1..3}/.[^\.][a-zA-Z]*
+rm -vrf /data/es-data{1..4}/*
+rm -vrf /data/es-data{1..4}/.[^\.][a-zA-Z]*
 
-# sudo rm -vrf /data/prometheus{0..2}/*
-# sudo rm -vrf /data/prometheus{0..2}/.[^\.][a-zA-Z]*
+rm -vrf /data/es-coor{1..3}/*
+rm -vrf /data/es-coor{1..3}/.[^\.][a-zA-Z]*
 
-# sudo rm -vrf /data/sidecar{0..2}/*
-# sudo rm -vrf /data/sidecar{0..2}/.[^\.][a-zA-Z]*
+# rm -vrf /data/prometh{1..3}/*
+# rm -vrf /data/prometh{1..3}/.[^\.][a-zA-Z]*
 
-# sudo rm -vrf /data/kibana/*
-# sudo rm -vrf /data/kibana/.[^\.][a-zA-Z]*
+# rm -vrf /data/sidecar{1..3}/*
+# rm -vrf /data/sidecar{1..3}/.[^\.][a-zA-Z]*
 
-# sudo rm -vrf /data/grafana/*
-# sudo rm -vrf /data/grafana/.[^\.][a-zA-Z]*
+# rm -vrf /data/kibana/*
+# rm -vrf /data/kibana/.[^\.][a-zA-Z]*
 
-sudo ls -lRa /data
+# rm -vrf /data/grafana/*
+# rm -vrf /data/grafana/.[^\.][a-zA-Z]*
+
+tree -fal /data/

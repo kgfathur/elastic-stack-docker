@@ -1,0 +1,12 @@
+bootstrap.memory_lock: true
+action.destructive_requires_name: true
+xpack.monitoring.collection.enabled: true
+xpack.monitoring.elasticsearch.collection.enabled: false
+# discovery.zen.ping_timeout: 5s
+# discovery.seed_resolver.timeout: 5s
+node.name: master2
+node.roles: [ master, data ]
+cluster.name: "es-cluster"
+path:
+  data: /es/data/
+  logs: /es/log/
